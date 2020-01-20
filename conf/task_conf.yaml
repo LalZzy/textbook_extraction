@@ -1,0 +1,7 @@
+books:
+  - 1L2RM
+books1:
+  - StatisticalModels
+  - ComputationalStatistics
+books_info_conf:
+  /conf/books_info_test.yaml

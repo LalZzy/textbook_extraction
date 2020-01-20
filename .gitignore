@@ -1,0 +1,10 @@
+.idea/
+*.json
+*.log
+__pycache_/
+/data
+/data/textbook_txt/*.json
+!/data/textbook_txt/*
+__pycache__/
+.DS_Store
+*.pyc
