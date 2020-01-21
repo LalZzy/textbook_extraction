@@ -1,10 +1,8 @@
 .idea/
-*.json
 *.log
 __pycache_/
-/data
-/data/textbook_txt/*.json
-!/data/textbook_txt/*
+/data/corpus/*.json
+/data/concepts/*.json
 __pycache__/
 .DS_Store
 *.pyc

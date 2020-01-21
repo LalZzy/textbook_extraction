@@ -5,6 +5,7 @@ StatisticalModels:
   document_end_page: 706
   index_st_page: 729
   index_end_page: 737
+  chapter_pages: [1,15,52,94,161,225,300,353,417,468,565,645,696]
 1L2RM:
   outline_st_page: 1
   outline_end_page: 1
@@ -12,3 +13,4 @@ StatisticalModels:
   document_end_page: 21
   index_st_page: 22
   index_end_page: 22
+  chapter_pages: [1, 22]
