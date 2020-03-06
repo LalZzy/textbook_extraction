@@ -56,8 +56,7 @@ class ConceptIdxDealer(object):
         for book in books:
             row = self.read_one_file(book)
             for concepts in row:
-                concepts = [concept.lower()
-                            for concept in concepts if concept != '']
+                concepts = [concept.lower() for concept in concepts if concept != '']
                 self.mark_idx(concepts)
         if self.need_update:
             with open(self.concepts_rw_path + 'all_concepts.csv', 'w+') as f:
@@ -84,7 +83,6 @@ class ConceptCountDealer(object):
         page_result = dict()
         for concept, idx in self.concept2idx.items():
             page2frequency = self.count_one_concept(concept, document_text)
-            print('concept: {},page idx: {}'.format(concept, page2frequency))
             page_result.setdefault(idx, defaultdict(int))
             for page, frequency in page2frequency.items():
                 page_result[idx][page] += frequency
@@ -105,7 +103,6 @@ class ConceptCountDealer(object):
         result = {'page_result': page_result, 'chapter_result': chapter_result}
         return result
 
-
     def save_data(self, book2result, book2book_info):
         for book, result in book2result.items():
             page_result = result['page_result']
@@ -119,7 +116,7 @@ class ConceptCountDealer(object):
                 chapter_result = result['chapter_result']
                 for concept, chp2frequency in chapter_result.items():
                     for chp, frequency in chp2frequency.items():
-                        f.write('{},{},{}\n'.format(concept, chp, frequency))
+                        f.write('{},{},{}\n'.format(chp, concept, frequency))
 
     def count_one_concept(self, concept, document_text):
         record = []
@@ -147,13 +144,16 @@ class ConceptCountDealer(object):
         for book in books:
             mark = dict()
             chapter_info = books_info_conf.get(book).get('chapter_pages')
-            for i, page_num in enumerate(chapter_info[:-1]):
-                mark[i] = idx
+            for i, _ in enumerate(chapter_info[:-1]):
+                mark[i+1] = idx
                 idx += 1
             self.book_chapter2idx[book] = mark
-
-
-
+        with open(module_path + '/data/concepts/book_chapter_ids.csv', 'w+') as fw:
+            for book in books:
+                chapter2idx = self.book_chapter2idx.get(book)
+                for i, idx in chapter2idx.items():
+                    fw.write('{},{}\n'.format(str(i)+book, str(idx)))
+        
     def load_books_info(self, fp_path):
         with open(fp_path, 'r') as f:
             book2book_info = yaml.load(f, Loader=yaml.BaseLoader)
@@ -167,15 +167,12 @@ class ConceptCountDealer(object):
         book2book_info = self.load_books_info(books_info_conf)
         # 对语料进行标号，教科书按章节划分，论文成篇划分。
         self.mark_chapter_idx(books, book2book_info)
-        import pdb;pdb.set_trace()
         for book in books:
             book_info = book2book_info.get(book)
             book2page_result[book] = self.count_one(book, book_info)
+            logging.warning('{} finish deal book {}'.format(self.__class__.__name__, book))
         # 储存原始数据
-        import pdb;pdb.set_trace()
         self.save_data(book2page_result, book2book_info)
-
-
 
 def main():
     books = ['1L2RM', 'StatisticalModels', 'ComputationalStatistics']

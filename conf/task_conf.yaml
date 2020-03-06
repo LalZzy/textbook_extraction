@@ -1,8 +1,13 @@
 books:
-  - 1L2RM
   - StatisticalModels
-books1:
-  - StatisticalModels
+  - StochasticProcesses
+  - ReinforcementLearning
+  - ConvexOptimizationbook
+  - RegressionModelingStrategies
   - ComputationalStatistics
+  - RossProbability
+  - CategoricalDataAnalysis
+  - DeepLearning
+  - 1L2RM
 books_info_conf:
-  /conf/books_info_test.yaml
+  /conf/books_info.yaml
