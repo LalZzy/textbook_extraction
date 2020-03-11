@@ -79,6 +79,7 @@ class ConceptCountDealer(object):
         document_page_range = range(int(book_info['document_st_page']), int(
             book_info['document_end_page']) + 1)
         document_text = [text[str(i)] for i in document_page_range]
+        document_text = [i.replace('\n', ' ') for i in document_text]
 
         page_result = dict()
         for concept, idx in self.concept2idx.items():
@@ -96,7 +97,7 @@ class ConceptCountDealer(object):
                 for i in range(len(chapter_pages)-1):
                     if page in range(chapter_pages[i], chapter_pages[i+1]):
                         break
-                chapter_idx = self.book_chapter2idx.get(book).get(i)
+                chapter_idx = self.book_chapter2idx.get(book).get(i+1)
                 chater_info[chapter_idx] += frequency
             chapter_result[concept_idx] = chater_info
         
@@ -123,7 +124,7 @@ class ConceptCountDealer(object):
 
         # '(' ,')'是正则表达式中的元字符，所以要把查询pattern中的'('替换为'\('
         concept = concept.replace('(', '\(').replace(')', '\)')
-        word_pages_fre = [len(re.findall('[\n ]?{}[\n ]?'.format(
+        word_pages_fre = [len(re.findall(' {}s? '.format(
             concept), text)) for text in document_text]
         word_pages = []
         for i, num in enumerate(word_pages_fre):
