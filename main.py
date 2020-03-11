@@ -2,6 +2,7 @@
 import yaml
 import time
 import logging 
+import argparse
 logging.basicConfig(level=logging.WARNING)
 from textbook_extraction.core.pdf_corpus_extractor import PdfCorpusExtractor
 from textbook_extraction.core.deal_concepts import ConceptIdxDealer, ConceptCountDealer
@@ -22,8 +23,16 @@ class MainHandler():
             handler.run(books, conf=self.conf)
             logging.warning('{} finish in {} seconds'.format(handler.__class__.__name__, time.time()-st))
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--conf_path')
+    args = parser.parse_args()
+    return args
+
 if __name__ == '__main__':
-    conf_path = 'conf/task_conf.yaml'
+    
+    args = get_args()
+    conf_path = args.conf_path
     handlers = [
         PdfCorpusExtractor(force_create=False),
         ConceptIdxDealer(),

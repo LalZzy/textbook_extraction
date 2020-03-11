@@ -25,7 +25,9 @@ then write your conf file in ./conf, you can reference ./conf/task_conf.yaml and
 when everything is ok, run 
 
 ```shell
-python main.py 
+python main.py --conf_path conf/task_{your}_conf.yaml
+# for example
+python main.py --conf_path conf/task_conf.yaml
 ```
 
 The output will be:
