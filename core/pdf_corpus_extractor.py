@@ -13,12 +13,14 @@ from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from concurrent.futures import ThreadPoolExecutor
 
-LigatureDict = {
+ReplaceDict = {
     'ﬁ': 'fi',
     'ﬂ': 'fl',
     'ﬀ': 'ff',
     'ﬃ': 'ffi',
-    'ﬄ': 'ffl'
+    'ﬄ': 'ffl',
+    '−': '-',
+    '–': '-'
 }
 
 class PdfCorpusExtractor(object):
@@ -50,7 +52,7 @@ class PdfCorpusExtractor(object):
         for page in self.extract_text_by_page(pdf_file):
             text = re.sub("\x0c", ' ', page)
             # 连字符深恶痛绝！
-            for f_word, t_word in LigatureDict.items():
+            for f_word, t_word in ReplaceDict.items():
                 text = text.replace(f_word, t_word)
             # 把文本全部转化为小写
             res[counter] = text.lower()

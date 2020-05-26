@@ -3,6 +3,7 @@ import re
 import os
 import yaml
 import json
+import csv
 from collections import defaultdict, Counter
 import sys
 import xlrd
@@ -13,7 +14,11 @@ module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 cpts_with_single_name = set()
 cpts_with_multi_name = set()
 inverted_index = defaultdict(list)
-
+DEFAULT_BOOK_INFO = {
+  'document_st_page': 1,
+  'document_end_page': 1,
+  'chapter_pages': [1,2]
+}
 
 class ConceptIdxDealer(object):
     def __init__(self, need_update=True):
@@ -25,12 +30,22 @@ class ConceptIdxDealer(object):
         self.concepts_rw_path = module_path + '/data/concepts/'
 
     def read_one_file(self, book):
-        fp = self.concepts_rw_path + 'concept_' + book + '.xlsx'
-        data = xlrd.open_workbook(fp)
-        table = data.sheets()[0]
         data_list = []
-        for i in range(table.nrows):
-            data_list.append(table.row_values(i))
+        possible_fps = [self.concepts_rw_path + 'concept_' + book + '.xlsx',
+                        self.concepts_rw_path + 'concept_' + book + '.csv']
+        if os.path.exists(possible_fps[0]):
+            fp = possible_fps[0]
+            data = xlrd.open_workbook(fp)
+            table = data.sheets()[0]
+
+            for i in range(table.nrows):
+                data_list.append(table.row_values(i))
+        elif os.path.exists(possible_fps[1]):
+            fp = possible_fps[1]
+            with open(fp) as f:
+                fp_data = csv.reader(f)
+                for row in fp_data:
+                    data_list.append(row)
         return data_list
 
     def mark_idx(self, cpts):
@@ -51,17 +66,28 @@ class ConceptIdxDealer(object):
         if not old_idx:
             self.cpts_len += 1
         return
+    
+    def make_inverse_table(self, concepts, book):
+        for concept in concepts:
+            self.inversed_index.setdefault(concept, [])
+            self.inversed_index[concept].append(book)
 
     def run(self, books, **params):
         for book in books:
             row = self.read_one_file(book)
             for concepts in row:
                 concepts = [concept.lower() for concept in concepts if concept != '']
+                concepts = [concept.replace('–', '-').replace('−', '-') for concept in concepts]
                 self.mark_idx(concepts)
+                self.make_inverse_table(concepts, book)
         if self.need_update:
             with open(self.concepts_rw_path + 'all_concepts.csv', 'w+') as f:
                 for concept, idx in sorted(self.concept2idx.items(), key=lambda x: x[1]):
                     f.write('{}::{}\n'.format(concept, idx))
+            with open(self.concepts_rw_path + 'concepts_book_inverse_table.csv','w+') as f:
+                for concept, books in self.inversed_index.items():
+                    for book in books:
+                        f.write('{}::{}\n'.format(concept, book))
         return self.concept2idx
 
 
@@ -124,7 +150,7 @@ class ConceptCountDealer(object):
 
         # '(' ,')'是正则表达式中的元字符，所以要把查询pattern中的'('替换为'\('
         concept = concept.replace('(', '\(').replace(')', '\)')
-        word_pages_fre = [len(re.findall(' {}s? '.format(
+        word_pages_fre = [len(re.findall(r'\b{}s?\b'.format(
             concept), text)) for text in document_text]
         word_pages = []
         for i, num in enumerate(word_pages_fre):
@@ -144,7 +170,8 @@ class ConceptCountDealer(object):
         idx = 0
         for book in books:
             mark = dict()
-            chapter_info = books_info_conf.get(book).get('chapter_pages')
+            book_conf = books_info_conf.get(book) or DEFAULT_BOOK_INFO
+            chapter_info = book_conf.get('chapter_pages')
             for i, _ in enumerate(chapter_info[:-1]):
                 mark[i+1] = idx
                 idx += 1
@@ -169,19 +196,57 @@ class ConceptCountDealer(object):
         # 对语料进行标号，教科书按章节划分，论文成篇划分。
         self.mark_chapter_idx(books, book2book_info)
         for book in books:
-            book_info = book2book_info.get(book)
+            book_info = book2book_info.get(book) or DEFAULT_BOOK_INFO
             book2page_result[book] = self.count_one(book, book_info)
             logging.warning('{} finish deal book {}'.format(self.__class__.__name__, book))
         # 储存原始数据
         self.save_data(book2page_result, book2book_info)
 
+class ConceptStatisticDealer(object):
+    
+    def __init__(self):
+        self.stat_file = module_path + '/data/concept_page_nums/all_words_info.csv'
+        self.concept_name_file = module_path + '/data/concepts/all_concepts.csv'
+        self.stat_write_file = module_path + '/data/concepts/concepts_stat.csv'
+    
+    def run(self, books, **params):
+        stats = defaultdict(int)
+        idx2concept = dict()
+        with open(self.concept_name_file, 'r') as f:
+            for i in f:
+                concept, idx = i.strip().split('::')
+                idx2concept[idx] = concept
+                
+        for i in idx2concept.values():
+            stats[i] += 0
+
+        with open(self.stat_file, 'r') as f:
+            for i in f:
+                _, concept_idx, count = i.strip().split(',')
+                stats[idx2concept.get(concept_idx)] += int(count)
+        
+        with open(self.stat_write_file, 'w') as f:
+            for concept, count in sorted(stats.items(), key=lambda x: x[1]):
+                f.write('{}::{}\n'.format(concept, count))
+        return None
+                
+
 def main():
     books = ['1L2RM', 'StatisticalModels', 'ComputationalStatistics']
     dealer = ConceptIdxDealer()
+    # dealer = ConceptStatisticDealer()
     concepts = dealer.run(books)
     print(concepts)
     return concepts
 
+def test_read_concepts():
+    books = ['1L2RM', 'ExtremalMechanismsforLocalDifferentialPrivacy']
+    dealer = ConceptIdxDealer()
+    for book in books:
+        concepts = dealer.read_one_file(book)
+        print(concepts)
+        
 
 if __name__ == '__main__':
-    main()
+    # main()
+    test_read_concepts()

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import yaml
 import time
-import logging 
+import logging
 import argparse
 logging.basicConfig(level=logging.WARNING)
 from textbook_extraction.core.pdf_corpus_extractor import PdfCorpusExtractor
-from textbook_extraction.core.deal_concepts import ConceptIdxDealer, ConceptCountDealer
-
+from textbook_extraction.core.deal_concepts import ConceptIdxDealer, ConceptCountDealer, ConceptStatisticDealer
+from textbook_extraction.core.books_dealer import LinksDealer
 
 class MainHandler():
     def __init__(self, conf_path, handlers=None):
@@ -30,14 +30,15 @@ def get_args():
     return args
 
 if __name__ == '__main__':
-    
+
     args = get_args()
     conf_path = args.conf_path
     handlers = [
         PdfCorpusExtractor(force_create=False),
         ConceptIdxDealer(),
-        ConceptCountDealer()
-
+        ConceptCountDealer(),
+        ConceptStatisticDealer(),
+        LinksDealer()
     ]
     main_handler = MainHandler(conf_path, handlers)
     main_handler.run()
