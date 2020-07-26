@@ -1,90 +1,60 @@
 StatisticalModels:
-  outline_st_page: 6
-  outline_end_page: 8
-  document_st_page: 12
+  document_st_page: 13
   document_end_page: 706
-  index_st_page: 729
-  index_end_page: 737
   chapter_pages: [1,15,52,94,161,225,300,353,417,468,565,645,696]
 
 StochasticProcesses:
-  outline_st_page: 8
-  outline_end_page: 13
   document_st_page: 18
   document_end_page: 401
-  index_st_page: 404
-  index_end_page: 407
   chapter_pages: [1,6,13,25,32,36,43,49,54,64,71,77,89,94,100,111,130,147,152,160,167,177,184,192,204,209,214,218,229,237,244,247,251,259,269,279,286,302,312,319,326,339,348]
 
 ReinforcementLearning:
-  outline_st_page: 8
-  outline_end_page: 10
-  document_st_page: 11
-  document_end_page: 242
-  index_st_page: 275
-  index_end_page: 276
+  document_st_page: 12
+  document_end_page: 243
   chapter_pages: [1,11,43,117,167,205,235]
 
 ConvexOptimizationbook:
-  outline_st_page: 6
-  outline_end_page: 8
-  document_st_page: 14
-  document_end_page: 697
-  index_st_page: 714
-  index_end_page: 729
+  document_st_page: 15
+  document_end_page: 698
   chapter_pages: [1,21,67,127,215,291,351,397,457,521,561,631]
         
 RegressionModelingStrategies:
-  outline_st_page: 15
-  outline_end_page: 23
-  document_st_page: 26
-  document_end_page: 550
-  index_st_page: 585
-  index_end_page: 597
+  document_st_page: 27
+  document_end_page: 551
   chapter_pages: [1,13,45,63,103,127,143,161,181,219,275,291,311,327,359,389,399,423,453,475,521,535]
 
 ComputationalStatistics:
-  outline_st_page: 5
-  outline_end_page: 13
-  document_st_page: 18
-  document_end_page: 423
-  index_st_page: 459
-  index_end_page: 470
+  document_st_page: 19
+  document_end_page: 424
   chapter_pages: [1,21,59,97,129,151,201,237,287,325,363,393,421]
 
 RossProbability:
-  outline_st_page: 6
-  outline_end_page: 9
-  document_st_page: 14
-  document_end_page: 468
-  index_st_page: 534
-  index_end_page: 543
+  document_st_page: 15
+  document_end_page: 469
   chapter_pages: [1,22,58,117,186,232,297,388,417,438,457]
 
 CategoricalDataAnalysis:
-  outline_st_page: 6
-  outline_end_page: 11
-  document_st_page: 15
-  document_end_page: 645
-  index_st_page: 715
-  index_end_page: 724
+  document_st_page: 16
+  document_end_page: 646
   chapter_pages: [1,36,70,115,165,211,267,314,357,409,455,491,538,576,600,619,632]
  
 DeepLearning:
-  outline_st_page: 1
-  outline_end_page: 7
-  document_st_page: 15
-  document_end_page: 737
-  index_st_page: 794
-  index_end_page: 801
+  document_st_page: 16
+  document_end_page: 738
   chapter_pages: [1,31,53,80,98,167,228,274,331,374,424,446,492,505,529,561,593,608,634,656,723]
 
 1L2RM:
-  outline_st_page: 1
-  outline_end_page: 1
   document_st_page: 1
   document_end_page: 21
-  index_st_page: 22
-  index_end_page: 22
   chapter_pages: [1, 22]
+
+2ConfidenceRegionLowRankRegre:
+  document_st_page: 1
+  document_end_page: 21
+  chapter_pages: [1, 21]
+
+3PRCA:
+  document_st_page: 1
+  document_end_page: 36
+  chapter_pages: [1, 36]
   

@@ -7,6 +7,7 @@ import csv
 from collections import defaultdict, Counter
 import sys
 import xlrd
+from pattern.text.en import pluralize, singularize
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -78,6 +79,7 @@ class ConceptIdxDealer(object):
             for concepts in row:
                 concepts = [concept.lower() for concept in concepts if concept != '']
                 concepts = [concept.replace('–', '-').replace('−', '-') for concept in concepts]
+                concepts = [singularize(concept) for concept in concepts]
                 self.mark_idx(concepts)
                 self.make_inverse_table(concepts, book)
         if self.need_update:
@@ -150,8 +152,9 @@ class ConceptCountDealer(object):
 
         # '(' ,')'是正则表达式中的元字符，所以要把查询pattern中的'('替换为'\('
         concept = concept.replace('(', '\(').replace(')', '\)')
-        word_pages_fre = [len(re.findall(r'\b{}s?\b'.format(
-            concept), text)) for text in document_text]
+        # 处理单复数匹配
+        word_pages_fre = [len(re.findall(r'\b({}|{})\b'.format(
+            concept, pluralize(concept)), text)) for text in document_text]
         word_pages = []
         for i, num in enumerate(word_pages_fre):
             record.extend([i+1]*num)
@@ -248,5 +251,5 @@ def test_read_concepts():
         
 
 if __name__ == '__main__':
-    # main()
-    test_read_concepts()
+    main()
+    # test_read_concepts()
